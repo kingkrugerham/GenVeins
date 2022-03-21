@@ -126,26 +126,24 @@ def union_vein_ims(original_im, tree_veins, segmentation_noise):
 	return final_veins
 
 
-def main_function(root_input_dir, root_output_dir, im):
+def save_final_veins(root_output_dir, final_veins, num_sims, ind):
+	final_veins_dir = root_output_dir + 'Final_Veins/'
+	make_output_dir(final_veins_dir)
+	plt.imsave(final_veins_dir + 'person_' + str(ind) + '_{}'.format(str(num_sims)) + '.png', final_veins, cmap=plt.get_cmap('gray'))
+	
+
+def main_function(root_output_dir, base_veins, ind):
 	"""
 	Orchestrator function for generating artificial hand vein-like structures on a black background.
 	:param root_output_dir: Output directory to save results.
 	:param i: I'th image in the list.
 	:return: None
 	"""
+	sims = []
 	for num_sims in range(4):
-		original_im = _io.imread(root_input_dir + im, as_gray=True)
-		tree_veins = draw_tree_veins(original_im)
-		branch_veins = simulate_segmentation_noise(original_im)
-		final_veins = union_vein_ims(original_im, tree_veins, branch_veins)
-		final_veins_dir = root_output_dir + '4.SimulatedAcquisition/'
-		make_output_dir(final_veins_dir)
-		plt.imsave(final_veins_dir + im.replace('.png', '') + '_{}'.format(str(num_sims)) + '.png', final_veins, cmap=plt.get_cmap('gray'))
-	
-
-if __name__ == '__main__':
-	root_input_dir = 'C:/Users/User/Desktop/PhD_Files/Output/GANs/Lightning/3.FinalVeins/'
-	root_output_dir = 'C:/Users/User/Desktop/PhD_Files/Output/GANs/Lightning/'
-	ims = os.listdir(root_input_dir)
-	for im in ims:
-		main_function(root_input_dir, root_output_dir, im)
+		tree_veins = draw_tree_veins(base_veins)
+		branch_veins = simulate_segmentation_noise(base_veins)
+		final_veins = union_vein_ims(base_veins, tree_veins, branch_veins)
+		sims.append(final_veins)
+		save_final_veins(root_output_dir, final_veins, num_sims, ind)
+	return sims

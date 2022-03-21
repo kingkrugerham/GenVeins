@@ -1,5 +1,5 @@
 # veinsnet_dcgan
-Repository for investigative methods to generate an artificial hand vein database (binary). 
+Repository for investigative methods to generate an artificial hand vein database. 
 
 Methods explored that didn't work:
 

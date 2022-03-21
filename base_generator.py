@@ -156,14 +156,20 @@ def union_vein_ims(seed_veins, branch_veins):
 	Union all the generated hand vein images.
 	:param seed_veins: Seed vein image.
 	:param branch_veins: Branch vein image.
-	:return: Final vein image.
+	:return: Base vein image.
 	"""
-	final_veins = initialize_im()
-	for i in range(final_veins.shape[0]):
-		for j in range(final_veins.shape[1]):
+	base_veins = initialize_im()
+	for i in range(base_veins.shape[0]):
+		for j in range(base_veins.shape[1]):
 			if seed_veins[i, j] > 0 or branch_veins[i, j] > 0:
-				final_veins[i, j] = 1
-	return final_veins
+				base_veins[i, j] = 1
+	return base_veins
+
+
+def save_base_veins(root_output_dir, base_veins, ind):
+	base_veins_dir = root_output_dir + 'Base_Veins/'
+	make_output_dir(base_veins_dir)
+	plt.imsave(base_veins_dir + 'person_'+str(ind)+'.png', base_veins, cmap=plt.get_cmap('gray'))
 
 
 def main_function(root_output_dir, ind):
@@ -175,18 +181,10 @@ def main_function(root_output_dir, ind):
 	"""
 	seed_veins = draw_seed_veins(root_output_dir, ind)
 	branch_veins = draw_branch_veins(root_output_dir, ind, seed_veins)
-	final_veins = union_vein_ims(seed_veins, branch_veins)
-	while verify_vein_spread(final_veins) == False:
+	base_veins = union_vein_ims(seed_veins, branch_veins)
+	while verify_vein_spread(base_veins) == False:
 		seed_veins = draw_seed_veins(root_output_dir, ind)
 		branch_veins = draw_branch_veins(root_output_dir, ind, seed_veins)
-		final_veins = union_vein_ims(seed_veins, branch_veins)
-	final_veins_dir = root_output_dir + '3.FinalVeins/'
-	make_output_dir(final_veins_dir)
-	plt.imsave(final_veins_dir + 'person_'+str(ind)+'.png', final_veins, cmap=plt.get_cmap('gray'))
-	
-
-if __name__ == '__main__':
-	root_output_dir = 'C:/Users/User/Desktop/PhD_Files/Output/GANs/Lightning/'
-	num_ims=100
-	for ind in range(num_ims):
-		main_function(root_output_dir, ind)
+		base_veins = union_vein_ims(seed_veins, branch_veins)
+	save_base_veins(root_output_dir, base_veins, ind)
+	return base_veins
