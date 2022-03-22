@@ -40,12 +40,6 @@ def normalize_vein_intensity(img):
 	return new_im
 
 
-def save_grey_veins(root_output_dir, img, ind):
-	grey_dir = root_output_dir + '5.Greyscale/'
-	make_output_dir(grey_dir)
-	plt.imsave(grey_dir + 'person_'+str(ind)+'.png', img, cmap=plt.get_cmap('gray'))
-
-
 def main_function(root_output_dir, struct_veins, ind):
 	"""
 	Orchestrator function for generating artificial hand vein-like structures on a black background.
@@ -66,4 +60,4 @@ def main_function(root_output_dir, struct_veins, ind):
 		img = rank.mean(img, selem=disk(3))
 		img = md(img, disk(3))
 		img = erosion(img, disk(1.5))
-		save_grey_veins(root_output_dir, img, ind)
+		save(root_output_dir, img, ind, struct_veins.index(f_vein), 'Grey')

@@ -14,7 +14,6 @@ def main_function(root_output_dir, num_inds):
 		back_main(root_output_dir, struct_veins, ind)
 
 if __name__ == "__main__":
-	
 	root_output_dir = 'D:/PhD_Files/Input/GenVeins/'
 	num_inds = sys.argv[1]
 	main_function(root_output_dir, num_inds)

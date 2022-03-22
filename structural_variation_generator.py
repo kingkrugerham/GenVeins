@@ -1,18 +1,11 @@
 # System imports
-import os
 import sys
 
 # Third party imports
-import matplotlib
-from matplotlib import pyplot as plt
 import numpy as np
-from skimage.io	import _io
 
 # Local imports
 from utils import *
-
-# Global setting for matplotlib
-matplotlib.use('Agg')
 
 # Increase python default recursion limit to enable 
 # search for acceptable hand vein image.
@@ -124,20 +117,20 @@ def union_vein_ims(original_im, tree_veins, segmentation_noise):
 			if tree_veins[i, j] > 0 or segmentation_noise[i, j] > 0 or original_im[i, j] > 0:
 				final_veins[i, j] = 1
 	return final_veins
-
-
-def save_final_veins(root_output_dir, final_veins, num_sims, ind):
-	final_veins_dir = root_output_dir + 'Final_Veins/'
-	make_output_dir(final_veins_dir)
-	plt.imsave(final_veins_dir + 'person_' + str(ind) + '_{}'.format(str(num_sims)) + '.png', final_veins, cmap=plt.get_cmap('gray'))
 	
 
 def main_function(root_output_dir, base_veins, ind):
 	"""
-	Orchestrator function for generating artificial hand vein-like structures on a black background.
-	:param root_output_dir: Output directory to save results.
-	:param i: I'th image in the list.
-	:return: None
+	Orchestrator function for simulating multiple hand vein acquisitions from a given base vein image.
+	Algorithm is defined as follows:
+		- Draw tree/branch veins, where at least one seed point must coincide with a seed vein.
+		- Randomly choose to add unconnected vein-like structures to the image (simulate segmentation noise).
+		- Union the base/seed veins, branch veins and unconnected veins.
+		- Repeat 4 times in order to acquire 4 simulated acquired hand vein images.
+	:param root_output_dir: Root output directory of results.
+	:param base_veins: Seed vein image.
+	:param ind: Numbered individual (for naming output files).
+	:return: List containing 4 simulated acquired hand vein images for individual # ind
 	"""
 	sims = []
 	for num_sims in range(4):
@@ -145,5 +138,5 @@ def main_function(root_output_dir, base_veins, ind):
 		branch_veins = simulate_segmentation_noise(base_veins)
 		final_veins = union_vein_ims(base_veins, tree_veins, branch_veins)
 		sims.append(final_veins)
-		save_final_veins(root_output_dir, final_veins, num_sims, ind)
+		save(root_output_dir, final_veins, ind, num_sims, 'Final_Veins')
 	return sims

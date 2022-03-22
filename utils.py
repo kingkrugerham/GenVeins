@@ -2,11 +2,17 @@
 import os
 
 # Third party imports
+import matplotlib
+from matplotlib import pyplot as plt
 import numpy as np
 from scipy.linalg import basic as ln
 from skimage.morphology import selem, binary_dilation
 from skimage.draw import line
 from more_itertools import pairwise
+
+
+# Global setting for matplotlib
+matplotlib.use('Agg')
 
 
 def make_output_dir(loc):
@@ -119,4 +125,14 @@ def initialize_im():
 	:return: Black image of shape (50, 40).
 	"""
 	return np.zeros((50, 40))
+
+
+def save(root_output_dir, veins_im, ind, num_sims, iden):
+	save_dir = root_output_dir + iden
+	make_output_dir(save_dir)
+	if num_sims != '':
+		im_name = 'person_{}_{}'.format(str(ind), str(num_sims)) + '.png'
+	else:
+		im_name = 'person_'+str(ind)+'.png'
+	plt.imsave(save_dir + im_name, veins_im, cmap=plt.get_cmap('gray'))
 	
