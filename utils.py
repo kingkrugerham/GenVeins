@@ -128,6 +128,15 @@ def initialize_im():
 
 
 def save(root_output_dir, veins_im, ind, num_sims, iden):
+	"""
+	Wrapper function to save vein image as a grey-scale png.
+	:param root_output_dir: Root output directory of results.
+	:param veins_im: Image to save.
+	:param ind: Numbered individual.
+	:param num_sims: i'th simulated acquired veins image.
+	:param iden: What image is being saved [one of 'Base_Veins', 'Final_Veins', 'Grey'].
+	:return: None
+	"""
 	save_dir = root_output_dir + iden
 	make_output_dir(save_dir)
 	if num_sims != '':

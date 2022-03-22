@@ -1,10 +1,7 @@
 # Third party imports
-import matplotlib
-from matplotlib import pyplot as plt
 import numpy as np
 from skimage.morphology import disk, binary_erosion, erosion
-from skimage.filters import median as md
-from skimage.filters import rank
+from skimage.filters import median, rank
 
 # Local imports
 from utils import *
@@ -42,9 +39,16 @@ def normalize_vein_intensity(img):
 
 def main_function(root_output_dir, struct_veins, ind):
 	"""
-	Orchestrator function for generating artificial hand vein-like structures on a black background.
+	Orchestrator function for creating a grey-scale version of the simulated acquired hand vein-like images.
+	The proposed algorithm is outlined as follows:
+		- First apply minor erosion of the hand vein image, since subsequent smoothing will thicken vein structures.
+		- Randomly greyify vein and background pixels, selecting from an acceptable intensity range.
+		- Normalize the vein intensities to reduce discontinuity.
+		- Apply successive smoothing with local mean and median filters.
+		- Apply intermittent grey-scale erosion in order to avoid blob-like structures.
 	:param root_output_dir: Output directory to save results.
-	:param i: I'th image in the list.
+	:param struct_veins: List of 4 simulated acquired hand veins for individual 'ind'.
+	:param ind: Numbered individual.
 	:return: None
 	"""
 
@@ -53,11 +57,11 @@ def main_function(root_output_dir, struct_veins, ind):
 		grey = make_greyscale(thinned)
 		img = normalize_vein_intensity(grey)
 		img = rank.mean(img, selem=disk(3))
-		img = md(img, disk(3))
+		img = median(img, disk(3))
 		img = rank.mean(img, selem=disk(2))
-		img = md(img, disk(2))
+		img = median(img, disk(2))
 		img = erosion(img, disk(2))
 		img = rank.mean(img, selem=disk(3))
-		img = md(img, disk(3))
+		img = median(img, disk(3))
 		img = erosion(img, disk(1.5))
 		save(root_output_dir, img, ind, struct_veins.index(f_vein), 'Grey')

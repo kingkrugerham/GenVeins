@@ -166,12 +166,6 @@ def union_vein_ims(seed_veins, branch_veins):
 	return base_veins
 
 
-def save_base_veins(root_output_dir, base_veins, ind):
-	base_veins_dir = root_output_dir + 'Base_Veins/'
-	make_output_dir(base_veins_dir)
-	
-
-
 def main_function(root_output_dir, ind):
 	"""
 	Orchestrator function for generating artificial hand vein-like structures on a black background.
