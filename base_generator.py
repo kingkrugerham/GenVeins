@@ -18,8 +18,6 @@ matplotlib.use('Agg')
 sys.setrecursionlimit(100000)
 
 
-# TODO: Add sparsity between seed veins!
-
 def generate_seed_pairs():
 	"""
 	Randomly add seed vein points (seed pairs). The proposed algorithm is as follows:
@@ -108,7 +106,7 @@ def verify_seed_vein(seed_point_pairs, seed_1, seed_2):
 		return True
 	return False
 
-
+# TODO: Add more sparsity between seed veins!
 def verify_vein_spread(im):
 	"""
 	Verify that the random propagation algorithm introduced enough spread of the veins across the image.
@@ -183,12 +181,12 @@ def main_function(root_output_dir, ind):
 	:param ind: Numbered individual in question.
 	:return: Binary image containing base veins.
 	"""
-	seed_veins = draw_seed_veins(root_output_dir, ind)
-	branch_veins = draw_branch_veins(root_output_dir, ind, seed_veins)
+	seed_veins = draw_seed_veins()
+	branch_veins = draw_branch_veins(seed_veins)
 	base_veins = union_vein_ims(seed_veins, branch_veins)
 	while verify_vein_spread(base_veins) == False:
-		seed_veins = draw_seed_veins(root_output_dir, ind)
-		branch_veins = draw_branch_veins(root_output_dir, ind, seed_veins)
+		seed_veins = draw_seed_veins()
+		branch_veins = draw_branch_veins(seed_veins)
 		base_veins = union_vein_ims(seed_veins, branch_veins)
 	save(root_output_dir, base_veins, ind, '', 'Base_Veins')
 	return base_veins

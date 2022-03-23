@@ -67,7 +67,8 @@ def main_function(root_output_dir, struct_veins, ind):
 	:param ind: Numbered individual.
 	:return: None
 	"""
-	for f_vein in struct_veins:
+	for i in range(len(struct_veins)):
+		f_vein = struct_veins[i]
 		img = binary_erosion(f_vein, disk(1))
 		img = make_greyscale(img)
 		img = normalize_vein_intensity(img)
@@ -79,4 +80,4 @@ def main_function(root_output_dir, struct_veins, ind):
 		img = rank.mean(img, selem=disk(3))
 		img = median(img, disk(3))
 		img = erosion(img, disk(1.5))
-		save(root_output_dir, img, ind, struct_veins.index(f_vein), 'Grey')
+		save(root_output_dir, img, ind, i, 'Grey')

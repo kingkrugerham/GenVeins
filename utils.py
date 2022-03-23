@@ -151,7 +151,7 @@ def save(root_output_dir, veins_im, ind, num_sims, iden):
 	:param iden: What image is being saved [one of 'Base_Veins', 'Final_Veins', 'Grey'].
 	:return: None
 	"""
-	save_dir = root_output_dir + iden
+	save_dir = root_output_dir + iden + '/'
 	make_output_dir(save_dir)
 	if num_sims != '':
 		im_name = 'person_{}_{}'.format(str(ind), str(num_sims)) + '.png'
