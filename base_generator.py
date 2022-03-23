@@ -24,13 +24,10 @@ def generate_seed_pairs():
 	"""
 	Randomly add seed vein points (seed pairs). The proposed constraints for selecting seed pairs are as follows:
 		- Seed pairs are located on different edges of the image.
-		- Number of seed pairs will be either 2, 3 or 4 (resulting in 2, 3 or 4 seed veins)
-		- Squared Euclidean Distance between seed points must be larger or equal to 30 (span enough of the image)
-		- Vertical distance between seed points must be larger or equal to 40 (Ensure vertically oriented seed veins)
-	:param im: Black image onto which to add the seed points.
-	:param root_output_dir: Location to save images.
-	:param i: ith image in the list.
-	:return: Image containing seed points, seed point pairs.
+		- Number of seed pairs will be either 2 or 3 (resulting in 2 or 3 seed veins)
+		- Squared Euclidean Distance between seed points must be larger or equal to 35 (span enough of the image)
+		- Vertical distance between seed points must be larger or equal to 35 (Ensure vertically oriented seed veins)
+	:return: Seed point pairs.
 	"""
 	num_seed_points = np.random.choice([2, 3], p=[0.65, 0.35])
 	image_border_ranges = [[(0, n) for n in range(0, 40)],
@@ -86,7 +83,12 @@ def verify_seed_vein(seed_point_pairs, seed_1, seed_2):
 	"""
 	Check that seed pairs adhere to the following constraints:
 		- Each pair of seed veins must be sufficiently separated (not in close proximity).
-		- Each pair of seed veins must have a different angle (larger that 10 degrees different).
+		- Each pair of seed veins must have a different angle (larger than 10 degrees).
+			This is an attempt to mitigate the problem of adjacent seed veins (which is rarely the case with actual hand veins).
+	:param seed_point_pairs: Exisiting seed point pairs from which to determine angle between new seed point pair.
+	:param seed_1: New seed point 1.
+	:param seed_2 New seed point 2.
+	:return: True if angle between new seed point pair is different enough from all existing seed point pairs.
 	"""
 	angles = []
 	for spp in seed_point_pairs:
@@ -112,48 +114,43 @@ def verify_vein_spread(im):
 	return True
 
 
-def draw_seed_veins(root_output_dir, ind):
+def draw_seed_veins():
 	"""
-	Function to connect seed point pairs with vein-like structures. The proposed algorithm is detailed in propagate_and_draw_veins():
-	:param root_output_dir: Location to save images.
-	:param i: ith image in the list.
+	Draw seed veins on a black image. The proposed algorithm is as follows:
+		- Generate seed pairs for 
+	detailed in propagate_and_draw_veins(im, seed_point_pairs):
 	:return: Image containing seed veins, seed vein coordinates
 	"""
 	im = initialize_im()
-	seed_veins_dir = root_output_dir + '1.SeedVeins/'
-	make_output_dir(seed_veins_dir)
 	seed_point_pairs = generate_seed_pairs()
 	im = propagate_and_draw_veins(im, seed_point_pairs)
 	dilation_factor = np.random.choice([1, 1.5, 2], p=[0.3, 0.4, 0.3])
 	im = dilate(im, dilation_factor)
-	plt.imsave(seed_veins_dir + 'person_'+str(ind)+'.png', im, cmap=plt.get_cmap('gray'))
 	return im
 
 
-def draw_branch_veins(root_output_dir, ind, seed_veins):
+def draw_branch_veins(seed_veins):
 	"""
-	Add branching veins based on the seed vein information. The proposed algorithm is as follows:
-		- Branching veins run from one seed vein to another.
+	Possibly draw branch veins on a black image based on the seed vein information. 
+	The proposed algorithm is as follows:
+		- Branch veins run from one seed vein to another.
 		- They follow the same propagation algorithm as generating the seed veins.
-	:param root_output_dir: Location to save images.
-	:param i: ith image in the list.
+		- Dilate branch veins by an acceptable factor (typically thinner than seed veins).
+	:param seed_veins: Image containing seed veins from which to determine and draw branch veins.
 	:return: Image with added branch veins.
 	"""
 	im = initialize_im()
-	branch_veins_dir = root_output_dir + '2.BranchVeins/'
-	make_output_dir(branch_veins_dir)
 	branch_point_pairs = generate_branch_seed_pairs(seed_veins)
 	if len(branch_point_pairs) > 0:
 		im = propagate_and_draw_veins(im, branch_point_pairs)
 		dilation_factor = np.random.choice([1, 1.5])
 		im = dilate(im, dilation_factor)
-	plt.imsave(branch_veins_dir + 'person_'+str(ind)+'.png', im, cmap=plt.get_cmap('gray'))
 	return im
 
 
 def union_vein_ims(seed_veins, branch_veins):
 	"""
-	Union all the generated hand vein images.
+	Union the generated seed and branch hand vein images.
 	:param seed_veins: Seed vein image.
 	:param branch_veins: Branch vein image.
 	:return: Base vein image.
@@ -168,10 +165,13 @@ def union_vein_ims(seed_veins, branch_veins):
 
 def main_function(root_output_dir, ind):
 	"""
-	Orchestrator function for generating artificial hand vein-like structures on a black background.
+	Orchestrator function for generating base (seed + branch) veins on a black background. 
+	The proposed algorithm is as follows (find detailed descriptions of each step in function docstrings):
+		- Draw the first iteration of seed and branch veins on a black background.
+		- Verify the obtained base veins are acceptable and continue to restart until this is so.
 	:param root_output_dir: Output directory to save results.
-	:param i: I'th image in the list.
-	:return: None
+	:param ind: Numbered individual in question.
+	:return: Binary image containing base veins.
 	"""
 	seed_veins = draw_seed_veins(root_output_dir, ind)
 	branch_veins = draw_branch_veins(root_output_dir, ind, seed_veins)

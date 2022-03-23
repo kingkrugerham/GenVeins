@@ -15,17 +15,15 @@ sys.setrecursionlimit(100000)
 def generate_tree_seed_pairs(original_im):
 	"""
 	Generate a number of tree seed point pairs to connect with vein-like structures.
-	:param im: Image from which to determine tree seed point pairs.
+	The proposed algorithm is as follows:
+		- Find vein and background coordinates in original_im.
+		- Randomly choose number of tree seed pairs (either 0, 1 or 2) in favour of 1 tree vein.
+		- Verify the vertical and horizontal distances between selected tree seed points are in acceptable range:
+			(tree veins are typically much shorter than base/main veins).
+	:param original_im: Image containing base veins from which to determine tree seed point pairs.
 	:return: List of seed point pairs for tree veins.
 	"""
-	vein_coords, back_coords = [], []
-	for i in range(original_im.shape[0]):
-		for j in range(original_im.shape[1]):
-			if original_im[i, j] == 1:
-				vein_coords.append((i, j))
-			else:
-				back_coords.append((i, j))
-
+	vein_coords, back_coords = find_coords(original_im)
 	num_tree_seeds = np.random.choice([0, 1, 2], p=[0.25, 0.45, 0.3])
 	tree_seed_pairs = []
 	if not num_tree_seeds == 0:
@@ -44,17 +42,15 @@ def generate_tree_seed_pairs(original_im):
 def generate_noise_seed_pairs(original_im):
 	"""
 	Generate a number of unconnected seed point pairs to connect with vein-like structures.
-	:param im: Image from which to determine unconnected seed point pairs.
+	The proposed algorithm is as follows:
+		- Same selection criteria as tree veins (see docstring for generate_tree_seed_pairs(original_im)).
+		- Unconnected veins are not required to be connected to any existing veins.
+		- Unconnected veins are also defined a little shorter than branch veins, since the purpose of adding
+			unconnected veins are to simulate noise obtained during acquisition (may or may not be veins).
+	:param original_im: Image from which to determine unconnected seed point pairs.
 	:return: List of seed point pairs for unconnected veins.
 	"""
-	vein_coords, back_coords = [], []
-	for i in range(original_im.shape[0]):
-		for j in range(original_im.shape[1]):
-			if original_im[i, j] == 1:
-				vein_coords.append((i, j))
-			else:
-				back_coords.append((i, j))
-
+	_, back_coords = find_coords(original_im)
 	num_objects = np.random.choice([0, 1, 2], p=[0.25, 0.45, 0.3])
 	unconnected_seed_pairs = []
 	if not num_objects == 0:
@@ -70,12 +66,13 @@ def generate_noise_seed_pairs(original_im):
 
 def draw_tree_veins(original_im):
 	"""
-	Add tree veins based on the current vein information. The proposed algorithm is as follows:
-		- Tree veins propagate out of existing veins towards another random seed point not within the current vein structure.
+	Possibly add tree veins based on the current vein information. The proposed algorithm is as follows:
+		- Tree veins propagate out of existing veins towards another random seed point not required to be 
+			within the current vein structure.
 		- They follow the same propagation algorithm as generating the seed veins.
-	:param root_output_dir: Location to save images.
-	:param i: ith image in the list.
-	:return: Image with added tree veins.
+		- Dilate tree veins by a random acceptable factor (typically thinner than main veins)
+	:param original_im: Binary base veins image from which to determine tree seed pairs.
+	:return: Black image with added tree veins (will be joined with base veins later in the algorithm).
 	"""
 	im = initialize_im()
 	tree_point_pairs = generate_tree_seed_pairs(original_im)
@@ -86,14 +83,14 @@ def draw_tree_veins(original_im):
 	return im
 
 
-def simulate_segmentation_noise(original_im):
+def draw_unconnected_veins(original_im):
 	"""
-	Add unconnected veins based on the current vein information. The proposed algorithm is as follows:
-		- Unconnected veins are not connected to the existing vein structure (introduces some noise into the image).
+	Possibly add unconnected veins based on the current vein information. The proposed algorithm is as follows:
+		- Unconnected veins are not required to be connected to the existing vein structure (simulate acquisition noise).
 		- They follow the same propagation algorithm as generating the seed veins.
-	:param root_output_dir: Location to save images.
-	:param i: ith image in the list.
-	:return: Image with added tree veins.
+		- Dilate unconnected veins by an acceptable factor (typically thinner than base veins).
+	:param original_im: Base vein image from which to determine unconnected seed point pairs.
+	:return: Black image with added unconnected veins (will be joined to existing hand vein image later in the flow).
 	"""
 	im = initialize_im()
 	unconnected_seed_pairs = generate_noise_seed_pairs(original_im)
@@ -106,9 +103,10 @@ def simulate_segmentation_noise(original_im):
 
 def union_vein_ims(original_im, tree_veins, segmentation_noise):
 	"""
-	Union all the generated hand vein images.
-	:param seed_veins: Seed vein image.
-	:param branch_veins: Branch vein image.
+	Union all the generated hand vein images (base veins, tree veins and unconnected veins).
+	:param original_im: Seed vein image.
+	:param tree_veins: Tree vein image.
+	:param segmentation_noise: Unconnected vein image.
 	:return: Final vein image.
 	"""
 	final_veins = initialize_im()
@@ -135,7 +133,7 @@ def main_function(root_output_dir, base_veins, ind):
 	sims = []
 	for num_sims in range(4):
 		tree_veins = draw_tree_veins(base_veins)
-		branch_veins = simulate_segmentation_noise(base_veins)
+		branch_veins = draw_unconnected_veins(base_veins)
 		final_veins = union_vein_ims(base_veins, tree_veins, branch_veins)
 		sims.append(final_veins)
 		save(root_output_dir, final_veins, ind, num_sims, 'Final_Veins')

@@ -11,8 +11,8 @@ def main_function(root_output_dir, num_inds):
 	"""
 	Orchestrator function for the repo. The proposed algorithm is briefly outlined below, while an in depth
 	explanation of each step is documented in the corresponding module and functions.
-		- First, draw the base veins on a black image. This constitutes seed veins and branch veins.
-		- Second, create 4 copies of the base veins, adding tree veins and unconnected veins.
+		- Start by drawing the base veins on a black image. These constitute seed and branch veins.
+		- Next, create 4 copies of the base veins and add tree veins and unconnected veins (simulate acquisition noise).
 		- Lastly, greyify each of the 4 copies.
 	"""
 	for ind in range(num_inds):
@@ -23,6 +23,6 @@ def main_function(root_output_dir, num_inds):
 
 if __name__ == "__main__":
 	root_output_dir = 'D:/PhD_Files/Input/GenVeins/'
-	num_inds = sys.argv[1]  # number of individuals in the database to be generated.
+	num_inds = int(sys.argv[1])  # number of individuals in the database to be generated.
 	main_function(root_output_dir, num_inds)
 	

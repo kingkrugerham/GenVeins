@@ -6,9 +6,6 @@ from skimage.filters import median, rank
 # Local imports
 from utils import *
 
-# Global setting for matplotlib
-matplotlib.use('Agg')
-
 
 def make_greyscale(original_im):
 	"""

@@ -77,9 +77,8 @@ def propagate_and_draw_veins(im, seed_point_pairs):
 		- The horizontal path followed is based on the distance between and number of seed points, with random variation for each step.
 		- The connection points are constrained to not overflow out of the image and only run between seed points.
 	:param im: Seed point image onto which to draw the vein-like structures.
-	:param i: ith image in the list.
 	:param seed_point_pairs: Seed pairs which to connect with vein-like structures.
-	:return: Image containing veins, vein coordinates.
+	:return: Image (im) with veins drawn onto it.
 	"""
 	for seed_point_pair in sorted(seed_point_pairs):
 		num_connection_points = np.random.randint(low=5, high=15)
@@ -111,7 +110,6 @@ def propagate_and_draw_veins(im, seed_point_pairs):
 def dilate(im, size):
 	"""
 	Wrapper function to dilate given image with a certain size.
-	:param root_output_dir: Location to save images.
 	:param im: Image to dilate.
 	:param size: Dilation size.
 	:return: Dilated image.
@@ -125,6 +123,22 @@ def initialize_im():
 	:return: Black image of shape (50, 40).
 	"""
 	return np.zeros((50, 40))
+
+
+def find_coords(original_im):
+	"""
+	Function to find vein and background coordinates in given image.
+	:param original_im: Binary hand vein image from which to find vein and background coordinates.
+	:return: Lists containing vein and background coordinates.
+	"""
+	vein_coords, back_coords = [], []
+	for i in range(original_im.shape[0]):
+		for j in range(original_im.shape[1]):
+			if original_im[i, j] == 1:
+				vein_coords.append((i, j))
+			else:
+				back_coords.append((i, j))
+	return vein_coords, back_coords
 
 
 def save(root_output_dir, veins_im, ind, num_sims, iden):
@@ -142,6 +156,6 @@ def save(root_output_dir, veins_im, ind, num_sims, iden):
 	if num_sims != '':
 		im_name = 'person_{}_{}'.format(str(ind), str(num_sims)) + '.png'
 	else:
-		im_name = 'person_'+str(ind)+'.png'
+		im_name = 'person_{}'.format(str(ind)) + '.png'
 	plt.imsave(save_dir + im_name, veins_im, cmap=plt.get_cmap('gray'))
 	
