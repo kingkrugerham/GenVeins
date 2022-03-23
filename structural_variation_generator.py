@@ -78,8 +78,7 @@ def draw_tree_veins(original_im):
 	tree_point_pairs = generate_tree_seed_pairs(original_im)
 	if len(tree_point_pairs) > 0:
 		im = propagate_and_draw_veins(im, tree_point_pairs)
-		dilation_factor = np.random.choice([1, 1.5], p=[0.55, 0.45])
-		im = dilate(im, dilation_factor)
+		im = dilate(im, 1.5)
 	return im
 
 
@@ -96,8 +95,7 @@ def draw_unconnected_veins(original_im):
 	unconnected_seed_pairs = generate_noise_seed_pairs(original_im)
 	if len(unconnected_seed_pairs) > 0:
 		im = propagate_and_draw_veins(im, unconnected_seed_pairs)
-		dilation_factor = np.random.choice([1, 1.5], p=[0.65, 0.35])
-		im = dilate(im, dilation_factor)
+		im = dilate(im, 1.5)
 	return im
 
 

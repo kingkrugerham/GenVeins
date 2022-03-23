@@ -125,15 +125,13 @@ def draw_seed_veins():
 	Draw seed veins on a black image. The proposed algorithm is as follows:
 		- Generate seed point pairs based on conditions documented in docstring of generate_seed_pairs().
 		- Draw acceptable seed veins based on algorithm outlined in docstring of propagate_and_draw_veins().
-		- Dilate seed veins by an acceptable factor, slightly favouring 1.5 over 1 and 2, as seed veins are typically
-			thicker than branch and other veins.
+		- Dilate seed veins by an acceptable factor (seed veins are typically thicker than branch and other veins).
 	:return: Bianry image with added seed veins.
 	"""
 	im = initialize_im()
 	seed_point_pairs = generate_seed_pairs()
 	im = propagate_and_draw_veins(im, seed_point_pairs)
-	dilation_factor = np.random.choice([1, 1.5, 2], p=[0.3, 0.4, 0.3])
-	im = dilate(im, dilation_factor)
+	im = dilate(im, 2)
 	return im
 
 
@@ -151,8 +149,7 @@ def draw_branch_veins(seed_veins):
 	branch_point_pairs = generate_branch_seed_pairs(seed_veins)
 	if len(branch_point_pairs) > 0:
 		im = propagate_and_draw_veins(im, branch_point_pairs)
-		dilation_factor = np.random.choice([1, 1.5])
-		im = dilate(im, dilation_factor)
+		im = dilate(im, 1.5)
 	return im
 
 
