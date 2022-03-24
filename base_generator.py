@@ -41,7 +41,7 @@ def generate_seed_pairs():
 		borders = np.random.choice(image_border_ranges, size=2, replace=False, p=[0.3, 0.2, 0.3, 0.2])
 		seed_1 = borders[0][np.random.randint(len(borders[0]))]
 		seed_2 = borders[1][np.random.randint(len(borders[1]))]
-		while dist_between_seeds(seed_1, seed_2) < 35 or i_dist_between_seeds(seed_1, seed_2) < 35:
+		while dist_between_seeds(seed_1, seed_2) < 35 or i_dist_between_seeds(seed_1, seed_2) < 40:
 			seed_1 = borders[0][np.random.randint(len(borders[0]))]
 			seed_2 = borders[1][np.random.randint(len(borders[1]))]
 		if len(seed_point_pairs) > 0:
@@ -49,7 +49,7 @@ def generate_seed_pairs():
 				borders = np.random.choice(image_border_ranges, size=2, replace=False, p=[0.3, 0.2, 0.3, 0.2])
 				seed_1 = borders[0][np.random.randint(len(borders[0]))]
 				seed_2 = borders[1][np.random.randint(len(borders[1]))]
-				while dist_between_seeds(seed_1, seed_2) < 35 or i_dist_between_seeds(seed_1, seed_2) < 35:
+				while dist_between_seeds(seed_1, seed_2) < 35 or i_dist_between_seeds(seed_1, seed_2) < 40:
 					seed_1 = borders[0][np.random.randint(len(borders[0]))]
 					seed_2 = borders[1][np.random.randint(len(borders[1]))]
 		seed_point_pairs.append(sorted([seed_1, seed_2]))
@@ -66,12 +66,7 @@ def generate_branch_seed_pairs(seed_veins):
 	:param seed_veins: Image from which to determine branch seed point pairs.
 	:return: List of seed point pairs for branch veins.
 	"""
-	vein_coords = []
-	for i in range(seed_veins.shape[0]):
-		for j in range(seed_veins.shape[1]):
-			if seed_veins[i, j] == 1:
-				vein_coords.append((i, j))
-
+	vein_coords, _ = find_coords(seed_veins)
 	num_branch_seeds = np.random.choice([0, 1, 2, 3], p=[0.2, 0.35, 0.3, 0.15])
 	branch_seed_pairs = []
 	if not num_branch_seeds == 0:
@@ -101,7 +96,7 @@ def verify_seed_vein(seed_point_pairs, seed_1, seed_2):
 		angles.append(angle_between_seeds(spp[0], spp[1]))
 	new_angle = angle_between_seeds(seed_1, seed_2)
 	angle_prod = list(product([new_angle], angles))
-	accepted_angle_range = [v for v in range(10, 35)]
+	accepted_angle_range = [v for v in range(15, 45)]
 	if all([abs(v[0] - v[1]) in accepted_angle_range for v in angle_prod]):
 		return True
 	return False
@@ -115,7 +110,7 @@ def verify_vein_spread(im):
 	:return: False if percentage of white pixels are within the given ranges.
 	"""
 	spread = np.count_nonzero(im)/2000.
-	if spread < 0.35 or spread > 0.7:
+	if spread < 0.35 or spread > 0.75:
 		return False
 	return True
 

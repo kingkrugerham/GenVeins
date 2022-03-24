@@ -1,6 +1,6 @@
 # Third party imports
 import numpy as np
-from skimage.morphology import disk, erosion, binary_erosion
+from skimage.morphology import *
 from skimage.filters import median, rank
 
 # Local imports
