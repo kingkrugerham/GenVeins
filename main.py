@@ -19,6 +19,7 @@ def main_function(root_output_dir, num_inds):
 		base_veins = base_main(root_output_dir, ind)
 		struct_veins = struct_main(root_output_dir, base_veins, ind)
 		back_main(root_output_dir, struct_veins, ind)
+		print('Individual {} done.'.format(ind))
 
 
 if __name__ == "__main__":

@@ -666,21 +666,14 @@ class VeinsNetDataPreprocessor:
 		return image[cam[0]-25:cam[0]+25,cam[1]-20:cam[1]+20]
 
 
-	def wilches_pipeline(self, original_image, input_image_name):
+	def genveins_pipeline(self, original_image, input_image_name):
 		"""
-		Orchestrator function to extract the ROI, CLAHE-enhanced ROI and binarized ROI from an image of the Wilches database.
-		:param original_image: Input image from Wilches database.
+		Orchestrator function to run preprocessing steps for an image in the artificially
+		generated GenVeins database.
+		:param original_image: Input (greyscale ROI) image from GenVeins database.
+		:param input_image_name: Name of input image for output file naming.
 		:return: None
 		"""
-		# # Grey
-		# smoothed_image = self.apply_gaussian_smoothing(original_image, 1.5)
-		# binary_hand = self.threshold(smoothed_image)
-		# convex_hull_image = self.convex_hull(binary_hand)
-		# center_of_mass_coordinates = self.center_of_mass(convex_hull_image)
-		# roi_image = self.extract_roi_wilches(original_image, convex_hull_image, center_of_mass_coordinates)
-		# smoothed_roi = self.apply_gaussian_smoothing(roi_image, 2)
-		# resized_roi = 1-self.resize_for_network(smoothed_roi)
-		# self.save_image(input_image_name, 'Grey', resized_roi)
 		
 		smoothed_roi = 1-original_image
 
@@ -698,7 +691,6 @@ class VeinsNetDataPreprocessor:
 		seed2 = self.threshold(blth)
 		seed3 = self.intersection(seed1, seed2)
 		reconstructed = self.reconstruct(seed3, mask)
-		# resized_binary = self.resize_for_network(reconstructed)
 		self.save_image(input_image_name, 'Binary', reconstructed)
 
 
@@ -714,6 +706,6 @@ class VeinsNetDataPreprocessor:
 			
 			image_location = self.input_location+input_image_name
 			original_image = self.read_input_image(image_location)
-			self.wilches_pipeline(original_image, input_image_name)
+			self.genveins_pipeline(original_image, input_image_name)
 
 VeinsNetDataPreprocessor('Siam', 'D:', 'GenVeins')
