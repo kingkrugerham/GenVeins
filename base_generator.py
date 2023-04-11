@@ -67,7 +67,7 @@ def generate_branch_seed_pairs(seed_veins):
 	:return: List of seed point pairs for branch veins.
 	"""
 	vein_coords, _ = find_coords(seed_veins)
-	num_branch_seeds = np.random.choice([0, 1, 2, 3], p=[0.2, 0.35, 0.3, 0.15])
+	num_branch_seeds = np.random.choice([1, 2, 3], p=[0.3, 0.45, 0.25])
 	branch_seed_pairs = []
 	if not num_branch_seeds == 0:
 		for _ in range(num_branch_seeds):
@@ -101,7 +101,7 @@ def verify_seed_vein(seed_point_pairs, seed_1, seed_2):
 		return True
 	return False
 
-# TODO: Add more sparsity between seed veins!
+
 def verify_vein_spread(im):
 	"""
 	Verify that the random propagation algorithm introduced enough spread of the veins across the image.
@@ -110,7 +110,7 @@ def verify_vein_spread(im):
 	:return: False if percentage of white pixels are within the given ranges.
 	"""
 	spread = np.count_nonzero(im)/2000.
-	if spread < 0.35 or spread > 0.75:
+	if spread < 0.40 or spread > 0.80:
 		return False
 	return True
 
@@ -180,5 +180,5 @@ def main_function(root_output_dir, ind):
 		seed_veins = draw_seed_veins()
 		branch_veins = draw_branch_veins(seed_veins)
 		base_veins = union_vein_ims(seed_veins, branch_veins)
-	save(root_output_dir, base_veins, ind, '', 'Base_Veins')
+	# save(root_output_dir, base_veins, ind, '', 'Base_Veins')
 	return base_veins

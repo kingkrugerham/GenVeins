@@ -3,9 +3,11 @@ import sys
 
 # Third party imports
 import numpy as np
+from skimage import io, morphology, measure
 
 # Local imports
 from utils import *
+from test import add_random_objects
 
 # Increase python default recursion limit to enable 
 # search for acceptable hand vein image.
@@ -24,13 +26,13 @@ def generate_tree_seed_pairs(original_im):
 	:return: List of seed point pairs for tree veins.
 	"""
 	vein_coords, back_coords = find_coords(original_im)
-	num_tree_seeds = np.random.choice([0, 1, 2], p=[0.25, 0.45, 0.3])
+	num_tree_seeds = np.random.choice([0, 1, 2], p=[0.35, 0.45, 0.2])
 	tree_seed_pairs = []
 	if not num_tree_seeds == 0:
 		for _ in range(num_tree_seeds):
 			seed_1 = vein_coords[np.random.randint(len(vein_coords))]
 			seed_2 = back_coords[np.random.randint(len(back_coords))]
-			accepted_range = np.arange(5, 15)
+			accepted_range = np.arange(10, 20)
 			while i_dist_between_seeds(seed_1, seed_2) not in accepted_range or \
 				  j_dist_between_seeds(seed_1, seed_2) not in accepted_range:
 				seed_1 = vein_coords[np.random.randint(len(vein_coords))]
@@ -51,13 +53,15 @@ def generate_noise_seed_pairs(original_im):
 	:return: List of seed point pairs for unconnected veins.
 	"""
 	_, back_coords = find_coords(original_im)
-	num_objects = np.random.choice([0, 1, 2], p=[0.25, 0.45, 0.3])
+	num_objects = np.random.choice([0, 1, 2], p=[0.35, 0.45, 0.2])
 	unconnected_seed_pairs = []
 	if not num_objects == 0:
 		for _ in range(num_objects):
 			seed_1 = back_coords[np.random.randint(len(back_coords))]
 			seed_2 = back_coords[np.random.randint(len(back_coords))]
-			while i_dist_between_seeds(seed_1, seed_2) > 10 or j_dist_between_seeds(seed_1, seed_2) > 5:
+			accepted_range = np.arange(10, 15)
+			while i_dist_between_seeds(seed_1, seed_2) not in accepted_range or \
+				  j_dist_between_seeds(seed_1, seed_2) not in accepted_range:
 				seed_1 = back_coords[np.random.randint(len(back_coords))]
 				seed_2 = back_coords[np.random.randint(len(back_coords))]
 			unconnected_seed_pairs.append(sorted([seed_1, seed_2]))
@@ -132,7 +136,9 @@ def main_function(root_output_dir, base_veins, ind):
 	for num_sims in range(4):
 		tree_veins = draw_tree_veins(base_veins)
 		branch_veins = draw_unconnected_veins(base_veins)
-		final_veins = union_vein_ims(base_veins, tree_veins, branch_veins)
-		sims.append(final_veins)
-		save(root_output_dir, final_veins, ind, num_sims, 'Final_Veins')
+		union_veins = union_vein_ims(base_veins, tree_veins, branch_veins)
+		if np.random.random() > 0.4:
+			union_veins = add_random_objects(union_veins)
+		sims.append(union_veins)
+		# save(root_output_dir, union_veins, ind, num_sims, 'Final_Veins')
 	return sims

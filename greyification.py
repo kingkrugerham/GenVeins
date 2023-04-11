@@ -1,7 +1,7 @@
 # Third party imports
 import numpy as np
 from skimage.morphology import *
-from skimage.filters import median, rank
+from skimage.filters import median, rank, gaussian 
 
 # Local imports
 from utils import *
@@ -53,6 +53,16 @@ def normalize_vein_intensity(img):
 	return new_im
 
 
+def apply_gaussian_smoothing(image, factor):
+		"""
+		Apply gaussian smoothing to the input image.
+		:param image: Original input image from the given database.
+		:param factor: Smoothing factor.
+		:return: Gaussian smoothed image.
+		"""
+		return gaussian(image, factor)
+
+
 def main_function(root_output_dir, struct_veins, ind):
 	"""
 	Orchestrator function for creating a grey-scale version of the simulated acquired hand vein-like images.
@@ -72,13 +82,11 @@ def main_function(root_output_dir, struct_veins, ind):
 		img = binary_erosion(f_vein, selem=disk(1.5))
 		img = make_greyscale(img)
 		img = normalize_vein_intensity(img)
+		img = rank.mean(img, selem=disk(3))
+		img = median(img, disk(3))
 		img = rank.mean(img, selem=disk(2.5))
 		img = median(img, disk(2.5))
-		img = erosion(img, disk(2))
-		img = rank.mean(img, selem=disk(2))
-		img = median(img, disk(2))
-		img = erosion(img, disk(1.5))
-		img = rank.mean(img, selem=disk(2))
-		img = median(img, disk(2))
-		img = erosion(img, disk(1.5))
-		save(root_output_dir, img, ind, i, 'Grey')
+		img = rank.mean(img, selem=disk(2.5))
+		img = median(img, disk(2.5))
+		img = apply_gaussian_smoothing(img, 2)
+		save(root_output_dir, img, ind, i, 'Original')

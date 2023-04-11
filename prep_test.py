@@ -217,7 +217,7 @@ class VeinsNetDataPreprocessor:
 		"""
 		Set the location of the original images of the given database.
 		"""
-		self.input_location = self.base_dir+"PhD_Files/Input/{}/Grey/".format(self.database)
+		self.input_location = self.base_dir+"PhD_Files/Input/{}/50/Original/".format(self.database)
 
 
 	def read_input_image(self, input_location):
