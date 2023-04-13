@@ -22,12 +22,12 @@ def make_greyscale(original_im):
 	new_im = initialize_im()
 	for i in range(original_im.shape[0]):
 		for j in range(original_im.shape[1]):
-			var = np.random.uniform(-0.03, 0.03)
+			var = np.random.uniform(-0.05, 0.05)
 			if original_im[i, j] > 0:
-				vein_intensity = np.random.uniform(0.2, 0.4)
+				vein_intensity = np.random.uniform(0.2, 0.3)
 				new_im[i, j] = vein_intensity + var
 			else:
-				background_intensity = np.random.uniform(0.05, 0.1)
+				background_intensity = np.random.uniform(0.05, 0.15)
 				new_im[i, j] = background_intensity + var
 	return new_im
 
@@ -45,8 +45,8 @@ def normalize_vein_intensity(img):
 	avg_vein_intensity = np.mean([img[x, y] for x in range(img.shape[0]) for y in range(img.shape[1]) if img[x, y] >= 0.17])
 	for i in range(img.shape[0]):
 		for j in range(img.shape[1]):
-			var = np.random.uniform(-0.03, 0.03)
-			if img[i, j] >= 0.17:
+			var = np.random.uniform(-0.05, 0.05)
+			if img[i, j] >= 0.2:
 				new_im[i, j] = avg_vein_intensity + var
 			else:
 				new_im[i, j] = img[i, j]
@@ -79,14 +79,14 @@ def main_function(root_output_dir, struct_veins, ind):
 	"""
 	for i in range(len(struct_veins)):
 		f_vein = struct_veins[i]
-		img = binary_erosion(f_vein, selem=disk(1.5))
+		img = binary_erosion(f_vein, selem=disk(2.5))
 		img = make_greyscale(img)
-		img = normalize_vein_intensity(img)
-		img = rank.mean(img, selem=disk(3))
-		img = median(img, disk(3))
-		img = rank.mean(img, selem=disk(2.5))
-		img = median(img, disk(2.5))
-		img = rank.mean(img, selem=disk(2.5))
-		img = median(img, disk(2.5))
-		img = apply_gaussian_smoothing(img, 2)
+		# img = normalize_vein_intensity(img)
+		img = rank.mean(img, selem=disk(2))
+		img = median(img, disk(2))
+		img = rank.mean(img, selem=disk(1.5))
+		img = median(img, disk(1.5))
+		img = rank.mean(img, selem=disk(1.5))
+		img = median(img, disk(1.5))
+		# img = apply_gaussian_smoothing(img, 1.5)
 		save(root_output_dir, img, ind, i, 'Original')

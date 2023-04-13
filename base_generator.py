@@ -67,7 +67,7 @@ def generate_branch_seed_pairs(seed_veins):
 	:return: List of seed point pairs for branch veins.
 	"""
 	vein_coords, _ = find_coords(seed_veins)
-	num_branch_seeds = np.random.choice([1, 2, 3], p=[0.3, 0.45, 0.25])
+	num_branch_seeds = np.random.choice([0, 1, 2, 3], p=[0.2, 0.35, 0.3, 0.15])
 	branch_seed_pairs = []
 	if not num_branch_seeds == 0:
 		for _ in range(num_branch_seeds):
@@ -110,7 +110,7 @@ def verify_vein_spread(im):
 	:return: False if percentage of white pixels are within the given ranges.
 	"""
 	spread = np.count_nonzero(im)/2000.
-	if spread < 0.40 or spread > 0.80:
+	if spread < 0.35 or spread > 0.70:
 		return False
 	return True
 
