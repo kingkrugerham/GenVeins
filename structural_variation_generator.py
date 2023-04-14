@@ -27,13 +27,13 @@ def generate_tree_seed_pairs(original_im):
 	:return: List of seed point pairs for tree veins.
 	"""
 	vein_coords, back_coords = find_coords(original_im)
-	num_tree_seeds = np.random.choice([0, 1, 2], p=[0.45, 0.45, 0.1])
+	num_tree_seeds = np.random.choice([0, 1, 2], p=[0.2, 0.4, 0.4])
 	tree_seed_pairs = []
 	if not num_tree_seeds == 0:
 		for _ in range(num_tree_seeds):
 			seed_1 = vein_coords[np.random.randint(len(vein_coords))]
 			seed_2 = back_coords[np.random.randint(len(back_coords))]
-			accepted_range = np.arange(5, 10)
+			accepted_range = np.arange(10, 15)
 			while i_dist_between_seeds(seed_1, seed_2) not in accepted_range or \
 				  j_dist_between_seeds(seed_1, seed_2) not in accepted_range:
 				seed_1 = vein_coords[np.random.randint(len(vein_coords))]
@@ -54,13 +54,13 @@ def generate_noise_seed_pairs(original_im):
 	:return: List of seed point pairs for unconnected veins.
 	"""
 	_, back_coords = find_coords(original_im)
-	num_objects = np.random.choice([0, 1, 2], p=[0.45, 0.45, 0.1])
+	num_objects = np.random.choice([0, 1, 2], p=[0.2, 0.4, 0.4])
 	unconnected_seed_pairs = []
 	if not num_objects == 0:
 		for _ in range(num_objects):
 			seed_1 = back_coords[np.random.randint(len(back_coords))]
 			seed_2 = back_coords[np.random.randint(len(back_coords))]
-			accepted_range = np.arange(5, 10)
+			accepted_range = np.arange(10, 15)
 			while i_dist_between_seeds(seed_1, seed_2) not in accepted_range or \
 				  j_dist_between_seeds(seed_1, seed_2) not in accepted_range:
 				seed_1 = back_coords[np.random.randint(len(back_coords))]
@@ -141,15 +141,15 @@ def main_function(root_output_dir, base_veins, ind):
 
 		# Apply random rotation and translation
 
-		angle = np.random.uniform(-1.5, 1.5)
-		tx = np.random.uniform(-1, 1)
-		ty = np.random.uniform(-1, 1)
+		angle = np.random.uniform(-3, 3)
+		tx = np.random.uniform(-2, 2)
+		ty = np.random.uniform(-2, 2)
 		transformation_matrix = np.float32([[1,0,tx], [0,1,ty]])
 		union_veins = cv2.warpAffine(union_veins, transformation_matrix, (union_veins.shape[1], union_veins.shape[0]), cv2.BORDER_WRAP)
 		union_veins = tf.rotate(union_veins, angle, mode='wrap')
 
-		# if np.random.random() > 0.4:
-		# 	union_veins = add_random_objects(union_veins)
+		if np.random.random() > (1/3.):
+			union_veins = add_random_objects(union_veins)
 		sims.append(union_veins)
 		# save(root_output_dir, union_veins, ind, num_sims, 'Final_Veins')
 	return sims

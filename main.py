@@ -17,7 +17,7 @@ def main_function(ind):
 		- Next, create 4 copies of the base veins and add tree veins and unconnected veins (simulate acquisition noise).
 		- Lastly, greyify each of the 4 copies.
 	"""
-	root_output_dir = f'PhD_Files/Input/GenVeinsV5/'
+	root_output_dir = f'PhD_Files/Input/GenVeinsV6/'
 	base_veins = base_main(root_output_dir, ind)
 	struct_veins = struct_main(root_output_dir, base_veins, ind)
 	back_main(root_output_dir, struct_veins, ind)
