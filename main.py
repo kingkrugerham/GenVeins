@@ -17,7 +17,7 @@ def main_function(ind):
 		- Next, create 4 copies of the base veins and add tree veins and unconnected veins (simulate acquisition noise).
 		- Lastly, greyify each of the 4 copies.
 	"""
-	root_output_dir = f'PhD_Files/Input/GenVeinsV6/'
+	root_output_dir = 'PhD_Files/Input/GenVeinsV8/'
 	base_veins = base_main(root_output_dir, ind)
 	struct_veins = struct_main(root_output_dir, base_veins, ind)
 	back_main(root_output_dir, struct_veins, ind)
@@ -34,4 +34,4 @@ if __name__ == "__main__":
 		_ = results.get()
 		pool.close()
 		pool.join()
-	print('Generating GenVeinsV5 database with {} individuals complete in {} seconds'.format(num_inds, time.time()-start))
+	print('Generating GenVeinsV8 database with {} individuals complete in {} seconds'.format(num_inds, time.time()-start))

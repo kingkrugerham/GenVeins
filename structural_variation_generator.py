@@ -141,15 +141,15 @@ def main_function(root_output_dir, base_veins, ind):
 
 		# Apply random rotation and translation
 
-		angle = np.random.uniform(-3, 3)
-		tx = np.random.uniform(-2, 2)
-		ty = np.random.uniform(-2, 2)
+		angle = np.random.uniform(-1, 1)
+		tx = np.random.uniform(-1, 1)
+		ty = np.random.uniform(-1, 1)
 		transformation_matrix = np.float32([[1,0,tx], [0,1,ty]])
 		union_veins = cv2.warpAffine(union_veins, transformation_matrix, (union_veins.shape[1], union_veins.shape[0]), cv2.BORDER_WRAP)
 		union_veins = tf.rotate(union_veins, angle, mode='wrap')
 
-		if np.random.random() > (1/3.):
-			union_veins = add_random_objects(union_veins)
+		# if np.random.random() > (1/3.):
+		# 	union_veins = add_random_objects(union_veins)
 		sims.append(union_veins)
 		# save(root_output_dir, union_veins, ind, num_sims, 'Final_Veins')
 	return sims
