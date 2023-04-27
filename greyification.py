@@ -42,14 +42,10 @@ def normalize_vein_intensity(img):
 	:return: Normalized grey scale hand vein image.
 	"""
 	new_im = initialize_im()
-	avg_vein_intensity = np.mean([img[x, y] for x in range(img.shape[0]) for y in range(img.shape[1]) if img[x, y] >= 0.17])
 	for i in range(img.shape[0]):
 		for j in range(img.shape[1]):
 			var = np.random.uniform(-0.05, 0.05)
-			if img[i, j] >= 0.2:
-				new_im[i, j] = avg_vein_intensity + var
-			else:
-				new_im[i, j] = img[i, j]
+			new_im[i, j] = img[i, j] + var
 	return new_im
 
 
@@ -79,7 +75,7 @@ def main_function(root_output_dir, struct_veins, ind):
 	"""
 	for i in range(len(struct_veins)):
 		f_vein = struct_veins[i]
-		img = binary_erosion(f_vein, selem=disk(2.5))
+		img = binary_erosion(f_vein, selem=disk(3))
 		img = make_greyscale(img)
 		# img = normalize_vein_intensity(img)
 		img = rank.mean(img, selem=disk(2))
@@ -88,5 +84,7 @@ def main_function(root_output_dir, struct_veins, ind):
 		img = median(img, disk(1.5))
 		img = rank.mean(img, selem=disk(1.5))
 		img = median(img, disk(1.5))
-		# img = apply_gaussian_smoothing(img, 1.5)
+		# img = normalize_vein_intensity(img)
+		img = apply_gaussian_smoothing(img, 2.5)
+		img = erosion(img, selem=disk(1.5))
 		save(root_output_dir, img, ind, i, 'Original')
