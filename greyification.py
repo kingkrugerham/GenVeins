@@ -32,31 +32,14 @@ def make_greyscale(original_im):
 	return new_im
 
 
-def normalize_vein_intensity(img):
-	"""
-	Function to normalize the vein intensity in order to avoid discontinuities introduced by initial greyification.
-	The proposed algorithm is outlined as follows.
-		- Find the average intensity of the hand vein pixels in the initially greyified image.
-		- Set each vein pixel equal to the average intensity and add minor variation to avoid a monotone vein intensity.
-	:param img: Initially greyified vein image (output of make_greyscale(original_im))
-	:return: Normalized grey scale hand vein image.
-	"""
-	new_im = initialize_im()
-	for i in range(img.shape[0]):
-		for j in range(img.shape[1]):
-			var = np.random.uniform(-0.05, 0.05)
-			new_im[i, j] = img[i, j] + var
-	return new_im
-
-
 def apply_gaussian_smoothing(image, factor):
-		"""
-		Apply gaussian smoothing to the input image.
-		:param image: Original input image from the given database.
-		:param factor: Smoothing factor.
-		:return: Gaussian smoothed image.
-		"""
-		return gaussian(image, factor)
+	"""
+	Apply gaussian smoothing to the input image.
+	:param image: Original input image from the given database.
+	:param factor: Smoothing factor.
+	:return: Gaussian smoothed image.
+	"""
+	return gaussian(image, factor)
 
 
 def main_function(root_output_dir, struct_veins, ind):
@@ -77,14 +60,12 @@ def main_function(root_output_dir, struct_veins, ind):
 		f_vein = struct_veins[i]
 		img = binary_erosion(f_vein, selem=disk(3))
 		img = make_greyscale(img)
-		# img = normalize_vein_intensity(img)
 		img = rank.mean(img, selem=disk(2))
 		img = median(img, disk(2))
 		img = rank.mean(img, selem=disk(1.5))
 		img = median(img, disk(1.5))
 		img = rank.mean(img, selem=disk(1.5))
 		img = median(img, disk(1.5))
-		# img = normalize_vein_intensity(img)
 		img = apply_gaussian_smoothing(img, 2.5)
 		img = erosion(img, selem=disk(1.5))
 		save(root_output_dir, img, ind, i, 'Original')

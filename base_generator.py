@@ -168,7 +168,7 @@ def main_function(root_output_dir, ind):
 	Orchestrator function for generating base (seed + branch) veins on a black background. 
 	The proposed algorithm is as follows (find detailed descriptions of each step in function docstrings):
 		- Draw the first iteration of seed and branch veins on a black background.
-		- Verify the obtained base veins are acceptable and continue to restart until this is so.
+		- Verify the spread of obtained base veins are acceptable and continue to restart until this is so.
 	:param root_output_dir: Output directory to save results.
 	:param ind: Numbered individual in question.
 	:return: Binary image containing base veins.
@@ -180,5 +180,5 @@ def main_function(root_output_dir, ind):
 		seed_veins = draw_seed_veins()
 		branch_veins = draw_branch_veins(seed_veins)
 		base_veins = union_vein_ims(seed_veins, branch_veins)
-	# save(root_output_dir, base_veins, ind, '', 'Base_Veins')
+	# save(root_output_dir, base_veins, ind, '', 'Base_Veins')  # uncomment if you want to see the generated base binary structures.
 	return base_veins

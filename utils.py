@@ -152,7 +152,10 @@ def save(root_output_dir, veins_im, ind, num_sims, iden):
 	:return: None
 	"""
 	save_dir = root_output_dir + iden + '/'
-	make_output_dir(save_dir)
+	try:
+		make_output_dir(save_dir)
+	except:
+		pass
 	if num_sims != '':
 		im_name = 'person_{}_{}'.format(str(ind), str(num_sims)) + '.png'
 	else:
