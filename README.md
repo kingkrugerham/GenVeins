@@ -1,6 +1,6 @@
 GenVeins
 ===================================================================================
-Repository for investigative methods to generate an artificial hand vein database. 
+Repository for investigative methods to generate an artificial hand vein database. Original database is available here: https://drive.google.com/drive/folders/1w5wNOeNssCxnR9HNlzVX28CGlu3gN4lv?usp=drive_link
 
 ### Methods explored that didn't work (see ./non_feasible_solutions):
 
@@ -21,8 +21,6 @@ Repository for investigative methods to generate an artificial hand vein databas
 	3 - Each supplemented copy, which constitutes a binary image, is then "greyed" in order to obtain four non-binary regions of interest 
 		(ROIs) for each artificial individual. The purpose of this step is to obtain samples similar to the ROIs of dimensions 50 x 40 
 		pixels.
-	4 - Each artificial non-binary ROI is finally subjected to the same preprocessing protocol as the one proposed in 
-		https://doi.org/10.5281/zenodo.6961864.
 
 The full report on this repository and protocols within is published in https://doi.org/10.5281/zenodo.6961864 (REPLACE WHEN PUBLISHED)
 
@@ -57,4 +55,3 @@ Currently generating images of shape 50 x 40. A lot of the 'empirical' values se
 	6 - It is most likely better to use the grey versions of the images in your process, and apply necessary contrast enhancement,
 		rather than using the binary hand vein images as is.
 	7 - requirements.txt does not include non_feasible_solutions
-	8 - Link to original db: https://drive.google.com/drive/folders/1w5wNOeNssCxnR9HNlzVX28CGlu3gN4lv?usp=drive_link
