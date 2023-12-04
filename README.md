@@ -57,3 +57,4 @@ Currently generating images of shape 50 x 40. A lot of the 'empirical' values se
 	6 - It is most likely better to use the grey versions of the images in your process, and apply necessary contrast enhancement,
 		rather than using the binary hand vein images as is.
 	7 - requirements.txt does not include non_feasible_solutions
+	8 - Link to original db: https://drive.google.com/drive/folders/1w5wNOeNssCxnR9HNlzVX28CGlu3gN4lv?usp=drive_link
