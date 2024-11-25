@@ -22,7 +22,7 @@ Repository for investigative methods to generate an artificial hand vein databas
 		(ROIs) for each artificial individual. The purpose of this step is to obtain samples similar to the ROIs of dimensions 50 x 40 
 		pixels.
 
-The full report on this repository and protocols within is published in https://doi.org/10.5281/zenodo.6961864 (REPLACE WHEN PUBLISHED)
+The full report on this repository and protocols within is published in [here](https://doi.org/10.1504/IJBM.2024.141936)
 
 ### Usage:
 	1 - Entry point is main.py
